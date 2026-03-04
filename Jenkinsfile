@@ -12,17 +12,19 @@ pipeline {
       steps { checkout scm }
     }
 
-    stage('SonarQube Scan') {
-      steps {
-        withSonarQubeEnv('sonar') {
-          sh '''
-            set -eux
-            sonar-scanner
-          '''
-        }
+stage('SonarQube Scan') {
+  steps {
+    script {
+      def scannerHome = tool 'sonar-scanner'
+      withSonarQubeEnv('sonar') {
+        sh """
+          set -eux
+          ${scannerHome}/bin/sonar-scanner
+        """
       }
     }
-
+  }
+}
     stage('Quality Gate') {
       steps {
         timeout(time: 5, unit: 'MINUTES') {
